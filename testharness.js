@@ -403,6 +403,9 @@ policies and contribution forms [3].
     var script_prefix = null;
     (function ()
     {
+        if (!self.document) {
+            return;
+        }
         var scripts = document.getElementsByTagName("script");
         for (var i = 0; i < scripts.length; i++) {
             if (scripts[i].src) {
@@ -427,7 +430,7 @@ policies and contribution forms [3].
     function next_default_name()
     {
         //Don't use document.title to work around an Opera bug in XHTML documents
-        var title = document.getElementsByTagName("title")[0];
+        var title = self.document && document.getElementsByTagName("title")[0];
         var prefix = (title && title.firstChild && title.firstChild.data) || "Untitled";
         var suffix = name_counter > 0 ? " " + name_counter : "";
         name_counter++;
@@ -1327,17 +1330,20 @@ policies and contribution forms [3].
 
         this.status = new TestsStatus();
 
-        var this_obj = this;
-
-        on_event(window, "load",
-                 function()
-                 {
-                     this_obj.all_loaded = true;
-                     if (this_obj.all_done())
-                     {
-                         this_obj.complete();
-                     }
-                 });
+        if (self.window) {
+            var this_obj = this;
+            on_event(window, "load",
+                     function() {
+                         this_obj.all_loaded = true;
+                         if (this_obj.all_done()) {
+                             this_obj.complete();
+                         }
+                     });
+        } else {
+            // Workers don't have a load event.
+            this.all_loaded = true;
+            this.wait_for_finish = true;
+        }
 
         this.set_timeout();
     }
@@ -1574,7 +1580,7 @@ policies and contribution forms [3].
 
     var tests = new Tests();
 
-    window.onerror = function(msg) {
+    self.onerror = function(msg) {
         if (!tests.allow_uncaught_exception) {
             tests.status.status = tests.status.ERROR;
             tests.status.message = msg;
@@ -1612,7 +1618,7 @@ policies and contribution forms [3].
     */
 
     function Output() {
-        this.output_document = document;
+        this.output_document = self.document;
         this.output_node = null;
         this.done_count = 0;
         this.enabled = settings.output;
@@ -1643,7 +1649,7 @@ policies and contribution forms [3].
         if (properties.output_document) {
             this.output_document = properties.output_document;
         } else {
-            this.output_document = document;
+            this.output_document = self.document;
         }
         this.phase = this.STARTED;
     };
@@ -2133,7 +2139,7 @@ policies and contribution forms [3].
     function expose(object, name)
     {
         var components = name.split(".");
-        var target = window;
+        var target = self;
         for (var i = 0; i < components.length - 1; i++) {
             if (!(components[i] in target)) {
                 target[components[i]] = {};
@@ -2155,7 +2161,7 @@ policies and contribution forms [3].
             var i = 0;
             var so;
             var origins = location.ancestorOrigins;
-            while (w != w.parent) {
+            while (w.parent && w != w.parent) {
                 w = w.parent;
                 // In WebKit, calls to parent windows' properties that aren't on the same
                 // origin cause an error message to be displayed in the error console but
@@ -2176,7 +2182,7 @@ policies and contribution forms [3].
                 cache.push([w, so]);
                 i++;
             }
-            w = window.opener;
+            w = self.opener;
             if (w) {
                 // window.opener isn't included in the `location.ancestorOrigins` prop.
                 // We'll just have to deal with a simple check and an error msg on WebKit
