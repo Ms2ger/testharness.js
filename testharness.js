@@ -374,7 +374,7 @@ policies and contribution forms [3].
     var script_prefix = null;
     (function ()
     {
-        var scripts = document.getElementsByTagName("script");
+        var scripts = window.document.getElementsByTagName("script"); // XXX #833
         for (var i = 0; i < scripts.length; i++)
         {
             if (scripts[i].src)
@@ -471,7 +471,7 @@ policies and contribution forms [3].
 
     function on_event(object, event, callback)
     {
-      object.addEventListener(event, callback, false);
+      object.addEventListener && object.addEventListener(event, callback, false); // XXX #846
     }
 
     expose(test, 'test');
@@ -1213,7 +1213,7 @@ policies and contribution forms [3].
         if (this.is_done) {
             return;
         }
-        clearTimeout(this.timeout_id);
+        // clearTimeout(this.timeout_id); XXX #867
         if (this.status === this.NOTRUN)
         {
             this.status = this.PASS;
@@ -1354,10 +1354,10 @@ policies and contribution forms [3].
     Tests.prototype.set_timeout = function()
     {
         var this_obj = this;
-        clearTimeout(this.timeout_id);
+        // clearTimeout(this.timeout_id); XXX #867
         if (this.timeout_length !== null)
         {
-            this.timeout_id = setTimeout(function() {
+            this.timeout_id = window.setTimeout(function() { // XXX #833
                                              this_obj.timeout();
                                          }, this.timeout_length);
         }
@@ -1500,7 +1500,7 @@ policies and contribution forms [3].
 
     Tests.prototype.notify_complete = function()
     {
-        clearTimeout(this.timeout_id);
+        // clearTimeout(this.timeout_id); XXX #867
         var this_obj = this;
         var tests = map(this_obj.tests,
                         function(test)
@@ -1588,7 +1588,7 @@ policies and contribution forms [3].
     */
 
     function Output() {
-      this.output_document = document;
+      this.output_document = window.document; // XXX #833
       this.output_node = null;
       this.done_count = 0;
       this.enabled = settings.output;
@@ -2179,6 +2179,7 @@ policies and contribution forms [3].
     }
 
     function forEach_windows(callback) {
+        return;
         // Iterate of the the windows [self ... top, opener]. The callback is passed
         // two objects, the first one is the windows object itself, the second one
         // is a boolean indicating whether or not its on the same origin as the
