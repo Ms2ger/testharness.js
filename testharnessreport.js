@@ -262,7 +262,7 @@ var metadata_generator = {
      * Extract the metadata cache from the cache element if present
      */
     getCachedMetadata: function() {
-        var cacheElement = window.document.getElementById('metadata_cache'); // XXX #833, #740
+        var cacheElement = document.getElementById('metadata_cache'); // XXX #740
         
         if (cacheElement) {
             var cacheText = cacheElement.firstChild.nodeValue;
@@ -369,13 +369,17 @@ var metadata_generator = {
     },
 
     setup: function() {
-        window.add_completion_callback( // XXX #833
+        add_completion_callback(
             function (tests, harness_status) { 
                 metadata_generator.process(tests, harness_status)
             });
-        window.add_completion_callback( // XXX #833
+        add_completion_callback(
             function (tests, harness_status) { 
-                window.alert(JSON.stringify(harness_status));
+                alert(JSON.stringify(harness_status));
+            });
+        add_result_callback(
+            function (test) { 
+                alert("Test: status " + test.status + " (" + test.message + ")");
             });
     }
 }
