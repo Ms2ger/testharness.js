@@ -374,9 +374,13 @@ var metadata_generator = {
             function (tests, harness_status) {
                 metadata_generator.process(tests, harness_status);
             });
-        window.add_completion_callback( // XXX #833
+        add_completion_callback(
             function (tests, harness_status) { 
-                window.alert(JSON.stringify(harness_status));
+                alert(JSON.stringify(harness_status));
+            });
+        add_result_callback(
+            function (test) { 
+                alert("Test: status " + test.status + " (" + test.message + ")");
             });
     }
 };

@@ -1333,7 +1333,7 @@ policies and contribution forms [3].
 
         var this_obj = this;
 
-        on_event(window, "load",
+        window.onload =
                  function()
                  {
                      this_obj.all_loaded = true;
@@ -1341,7 +1341,7 @@ policies and contribution forms [3].
                      {
                          this_obj.complete();
                      }
-                 });
+                 };
 
         this.set_timeout();
     }
@@ -1719,7 +1719,8 @@ policies and contribution forms [3].
         }
 
         if (script_prefix != null) {
-            var stylesheet = output_document.createElementNS(xhtml_ns, "link");
+            var stylesheet = //output_document.createElementNS(xhtml_ns, "link"); #1021
+                output_document.createElement("link");
             stylesheet.setAttribute("rel", "stylesheet");
             stylesheet.setAttribute("href", script_prefix + "testharness.css");
             var heads = output_document.getElementsByTagName("head");
@@ -1810,7 +1811,8 @@ policies and contribution forms [3].
                                  var style_element = output_document.querySelector("style#hide-" + result_class);
                                  var input_element = element.querySelector("input");
                                  if (!style_element && !input_element.checked) {
-                                     style_element = output_document.createElementNS(xhtml_ns, "style");
+                                     style_element = //output_document.createElementNS(xhtml_ns, "style"); #1021
+                                            output_document.createElement("style");
                                      style_element.id = "hide-" + result_class;
                                      style_element.textContent = "table#results > tbody > tr."+result_class+"{display:none}";
                                      output_document.body.appendChild(style_element);
@@ -1853,7 +1855,8 @@ policies and contribution forms [3].
             return '';
         }
 
-        log.appendChild(document.createElementNS(xhtml_ns, "section"));
+        //log.appendChild(document.createElementNS(xhtml_ns, "section")); #1021
+        log.appendChild(document.createElement("section"));
         var assertions = has_assertions();
         var html = "<h2>Details</h2><table id='results' " + (assertions ? "class='assertions'" : "" ) + ">" +
             "<thead><tr><th>Result</th><th>Test Name</th>" +
@@ -1876,9 +1879,11 @@ policies and contribution forms [3].
         try {
             log.lastChild.innerHTML = html;
         } catch (e) {
-            log.appendChild(document.createElementNS(xhtml_ns, "p"))
+            //log.appendChild(document.createElementNS(xhtml_ns, "p")) #1021
+            log.appendChild(document.createElement("p"))
                .textContent = "Setting innerHTML for the log threw an exception.";
-            log.appendChild(document.createElementNS(xhtml_ns, "pre"))
+            //log.appendChild(document.createElementNS(xhtml_ns, "pre")) #1021
+            log.appendChild(document.createElement("pre"))
                .textContent = html;
         }
     };
@@ -2016,7 +2021,8 @@ policies and contribution forms [3].
                 element.data += template[i];
             }
         } else {
-            element = output_document.createElementNS(xhtml_ns, template[0]);
+            var element = //output_document.createElementNS(xhtml_ns, template[0]); #1021
+                output_document.createElement(template[0]);
             for (var name in template[1]) {
                 if (template[1].hasOwnProperty(name)) {
                     element.setAttribute(name, template[1][name]);
