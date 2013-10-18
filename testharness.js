@@ -405,7 +405,7 @@ policies and contribution forms [3].
     var script_prefix = null;
     (function ()
     {
-        var scripts = window.document.getElementsByTagName("script"); // XXX #833
+        var scripts = document.getElementsByTagName("script");
         for (var i = 0; i < scripts.length; i++) {
             var src;
             if (scripts[i].src) {
@@ -1255,7 +1255,7 @@ policies and contribution forms [3].
 
         this.phase = this.phases.COMPLETE;
 
-        // clearTimeout(this.timeout_id); XXX #867
+        clearTimeout(this.timeout_id);
         tests.result(this);
         this.cleanup();
     };
@@ -1405,9 +1405,9 @@ policies and contribution forms [3].
     Tests.prototype.set_timeout = function()
     {
         var this_obj = this;
-        // clearTimeout(this.timeout_id); XXX #867
+        clearTimeout(this.timeout_id);
         if (this.timeout_length !== null) {
-            this.timeout_id = window.setTimeout(function() { // XXX #833
+            this.timeout_id = setTimeout(function() {
                                              this_obj.timeout();
                                          }, this.timeout_length);
         }
@@ -1617,7 +1617,7 @@ policies and contribution forms [3].
     */
 
     function Output() {
-        this.output_document = window.document; // XXX #833
+        this.output_document = document;
         this.output_node = null;
         this.done_count = 0;
         this.enabled = settings.output;
