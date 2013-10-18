@@ -1787,6 +1787,7 @@ policies and contribution forms [3].
 
         log.appendChild(render(summary_template, {num_tests:tests.length}, output_document));
 
+        /* XXX #851
         forEach(output_document.querySelectorAll("section#summary label"),
                 function(element)
                 {
@@ -1811,7 +1812,7 @@ policies and contribution forms [3].
                                      style_element.parentNode.removeChild(style_element);
                                  }
                              });
-                });
+                });*/
 
         // This use of innerHTML plus manual escaping is not recommended in
         // general, but is necessary here for performance.  Using textContent
