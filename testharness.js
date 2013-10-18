@@ -1500,7 +1500,7 @@ policies and contribution forms [3].
 
     Tests.prototype.notify_complete = function()
     {
-        // clearTimeout(this.timeout_id); XXX #867
+        clearTimeout(this.timeout_id);
         var this_obj = this;
         var tests = map(this_obj.tests,
                         function(test)
