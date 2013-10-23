@@ -370,13 +370,25 @@ var metadata_generator = {
     },
 
     setup: function() {
-        window.add_completion_callback( // XXX #833
-            function (tests, harness_status) {
+                metadata_generator.process(tests, harness_status);
+/*        setTimeout(function() {
+            window.close()
+            window.close()
+        }, 5000);*/
+        add_completion_callback(
+            function (tests, harness_status) { 
                 metadata_generator.process(tests, harness_status);
             });
         add_completion_callback(
             function (tests, harness_status) { 
-                alert(JSON.stringify(harness_status));
+                alert("RESULT: " + JSON.stringify([
+                    tests.map(function(t) {
+                        return { name: t.name, status: t.status }
+                    }),
+                    harness_status
+                ]));
+                window.close();
+                setTimeout(function() { window.close(); }, 0);
             });
         add_result_callback(
             function (test) { 
