@@ -383,7 +383,7 @@ var metadata_generator = {
             function (tests, harness_status) { 
                 alert("RESULT: " + JSON.stringify([
                     tests.map(function(t) {
-                        return { name: t.name, status: t.status }
+                        return { name: t.name, status: t.status, message: t.message }
                     }),
                     harness_status
                 ]));
