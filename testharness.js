@@ -245,7 +245,8 @@ policies and contribution forms [3].
  * The page defining the tests may add callbacks for these events by calling
  * the following methods:
  *
- *   add_start_callback(callback) - callback called with no arguments
+ *   add_start_callback(callback) - callback called with the properties passed
+ *                                  to setup
  *   add_result_callback(callback) - callback called with a test argument
  *   add_completion_callback(callback) - callback called with an array of tests
  *                                       and an status object
@@ -1392,7 +1393,10 @@ policies and contribution forms [3].
 
     Tests.prototype.get_timeout = function()
     {
-        var metas = document.getElementsByTagName("meta");
+        if (!self.document) {
+            return;
+        }
+        var metas = self.document.getElementsByTagName("meta");
         for (var i = 0; i < metas.length; i++) {
             if (metas[i].name == "timeout") {
                 if (metas[i].content == "long") {
@@ -1883,11 +1887,30 @@ policies and contribution forms [3].
                .textContent = html;
         }
     };
-
-    var output = new Output();
-    add_start_callback(function (properties) {output.init(properties);});
-    add_result_callback(function (test) {output.show_status(tests);});
-    add_completion_callback(function (tests, harness_status) {output.show_results(tests, harness_status);});
+    if (self.location.href.endsWith("-worker.html")) {
+        var output = new Output();
+        var receive_message = function (message) {
+            switch (message.type) {
+            case "start":
+                output.init(message.value);
+                break;
+            case "result":
+                output.show_status(message.value);
+                break;
+            case "end":
+                output.show_results(message.value.tests, message.value.status);
+                break;
+            default:
+                break;
+            }
+        }
+        expose(receive_message, 'receive_message');
+    } else {
+        var output = new Output();
+        add_start_callback(function (properties) {output.init(properties);});
+        add_result_callback(function (test) {output.show_status(tests);}); // XXX tests?
+        add_completion_callback(function (tests, harness_status) {output.show_results(tests, harness_status);});
+    }
 
     /*
      * Template code
@@ -2243,6 +2266,45 @@ policies and contribution forms [3].
             supports = false;
         }
         return supports;
+    }
+
+    if (self.WorkerGlobalScope && self instanceof self.WorkerGlobalScope) {
+        var sanitize_for_postmessage = function(test) {
+            var sanitized = {}
+            for (var p in test) {
+                var prop = test[p]
+                if (typeof prop === "function") {
+                    continue;
+                }
+                if (p === "steps") {
+                    continue;
+                }
+                sanitized[p] = prop;
+            }
+            return sanitized;
+        };
+        add_start_callback(function(properties) {
+            postMessage({
+                type: "start",
+                value: properties
+            });
+        });
+        add_result_callback(function(test) {
+            postMessage({
+                type: "result",
+                value: sanitize_for_postmessage(test)
+            });
+        });
+        add_completion_callback(function(tests, status) {
+            status.OK = status.OK;
+            postMessage({
+                type: "end",
+                value: {
+                    tests: tests.map(sanitize_for_postmessage),
+                    status: status
+                }
+            });
+        });
     }
 })();
 // vim: set expandtab shiftwidth=4 tabstop=4:
