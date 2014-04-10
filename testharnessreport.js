@@ -370,7 +370,6 @@ var metadata_generator = {
     },
 
     setup: function() {
-                metadata_generator.process(tests, harness_status);
 /*        setTimeout(function() {
             window.close()
             window.close()
@@ -379,7 +378,7 @@ var metadata_generator = {
             function (tests, harness_status) { 
                 metadata_generator.process(tests, harness_status);
             });
-        add_completion_callback(
+/*        add_completion_callback(
             function (tests, harness_status) { 
                 alert("RESULT: " + JSON.stringify([
                     tests.map(function(t) {
@@ -393,7 +392,7 @@ var metadata_generator = {
         add_result_callback(
             function (test) { 
                 alert("Test: status " + test.status + " (" + test.message + ")");
-            });
+            });*/
     }
 };
 
