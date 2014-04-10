@@ -264,7 +264,7 @@ var metadata_generator = {
      * Extract the metadata cache from the cache element if present
      */
     getCachedMetadata: function() {
-        var cacheElement = window.document.getElementById('metadata_cache'); // XXX #833, #740
+        var cacheElement = document.getElementById('metadata_cache');
 
         if (cacheElement) {
             var cacheText = cacheElement.firstChild.nodeValue;
