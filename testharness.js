@@ -2017,7 +2017,7 @@ policies and contribution forms [3].
                 element.data += template[i];
             }
         } else {
-            var element = output_document.createElementNS(xhtml_ns, template[0]);
+            element = output_document.createElementNS(xhtml_ns, template[0]);
             for (var name in template[1]) {
                 if (template[1].hasOwnProperty(name)) {
                     element.setAttribute(name, template[1][name]);
