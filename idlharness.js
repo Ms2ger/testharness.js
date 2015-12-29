@@ -637,6 +637,20 @@ IdlInterface.prototype.test = function()
 IdlInterface.prototype.test_self = function()
 //@{
 {
+    // This function is called for each interface and callback interface
+    // passed in through add_idls (rather than add_untested_idls), unless it
+    // has a [NoInterfaceObject] extended attribute.
+    //
+    // This function tests:
+    //
+    // * the interface object, its [[Prototype]], its class string, and whether
+    //   [[Construct]] throws if there is no Constructor extended attribute;
+    // * the "length" property of the interface object;
+    // * the "name" property of the interface object;
+    // * the interface prototype object, its [[Prototype]], and its class
+    //   string;
+    // * the "constructor" property of the interface prototype object.
+
     test(function()
     {
         // This function tests WebIDL as of 2015-01-13.
@@ -943,6 +957,14 @@ IdlInterface.prototype.test_self = function()
 IdlInterface.prototype.test_member_const = function(member)
 //@{
 {
+    // This function is called for each constant defined on an interface or
+    // callback interface (if the constant is defined in IDL passed in through
+    // add_idls), unless the interface has a [NoInterfaceObject] extended
+    // attribute.
+    //
+    // This function tests that the constant is present on the interface object
+    // and the interface prototype object.
+
     if (!this.has_constants()) {
         throw "Internal error: test_member_const called without any constants";
     }
@@ -1004,6 +1026,25 @@ IdlInterface.prototype.test_member_const = function(member)
 IdlInterface.prototype.test_member_attribute = function(member)
 //@{
 {
+    // This function is called for each attribute defined on an interface or
+    // callback interface (if the attribute is defined in IDL passed in through
+    // add_idls), unless the interface has a [NoInterfaceObject] extended
+    // attribute.
+    //
+    // This function tests:
+    //
+    // * if the attribute is static, that the property exists on the interface
+    //   object;
+    // * if the attribute is regular and on a global, that the property exists
+    //   on the global object itself, and that the getter can be called with
+    //   the this value set to undefined;
+    // * if the attribute is regular and not on a global, that the property
+    //   exists on the interface prototype object, and the behaviour of getting
+    //   the property on the interface prototype object.
+    //
+    // If the attribute is regular, this function additionally calls
+    // do_interface_attribute_asserts with the object that has the property.
+
     test(function()
     {
         if (this.is_callback() && !this.has_constants()) {
@@ -1070,6 +1111,14 @@ IdlInterface.prototype.test_member_attribute = function(member)
 IdlInterface.prototype.test_member_operation = function(member)
 //@{
 {
+    // This function is called for each named operation that is not unforgeable
+    // and is defined on an interface or callback interface (if the operation
+    // is defined in IDL passed in through add_idls), unless the interface has
+    // a [NoInterfaceObject] extended attribute.
+    //
+    // This function tests that the relevant property exists and calls
+    // do_member_operation_asserts with the object that has the property.
+
     test(function()
     {
         // This function tests WebIDL as of 2015-12-29.
@@ -1197,6 +1246,14 @@ IdlInterface.prototype.do_member_operation_asserts = function(memberHolderObject
 IdlInterface.prototype.test_member_stringifier = function(member)
 //@{
 {
+    // This function is called for each anonymous stringifier operation defined
+    // on an interface or callback interface (if the operation is defined in
+    // IDL passed in through add_idls), unless the interface has a
+    // [NoInterfaceObject] extended attribute.
+    //
+    // This function tests that the toString property exists and behaves
+    // appropriately when called with invalid this values.
+
     test(function()
     {
         if (this.is_callback() && !this.has_constants()) {
@@ -1261,6 +1318,21 @@ IdlInterface.prototype.test_member_stringifier = function(member)
 IdlInterface.prototype.test_members = function()
 //@{
 {
+    // This function is called for each interface and callback interface (even
+    // if passed in through add_untested_idls), unless it has a
+    // [NoInterfaceObject] extended attribute.
+    //
+    // This function tests the members defined for this interface in IDL passed
+    // in through add_idls:
+    //
+    // * if the member is a constant, it calls test_member_const;
+    // * if the member is an attribute that is not unforgeable, it calls
+    //   test_member_attribute;
+    // * if the member is a named operation that is not unforgeable, it calls
+    //   test_member_operation;
+    // * if the member is a stringifier operation, it calls
+    //   test_member_stringifier.
+
     for (var i = 0; i < this.members.length; i++)
     {
         var member = this.members[i];
