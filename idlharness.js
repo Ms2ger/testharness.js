@@ -1416,31 +1416,31 @@ IdlInterface.prototype.test_object = function(desc)
 IdlInterface.prototype.test_primary_interface_of = function(desc, obj, exception, expected_typeof)
 //@{
 {
-    // We can't easily test that its prototype is correct if there's no
-    // interface object, or the object is from a different global environment
-    // (not instanceof Object).  TODO: test in this case that its prototype at
-    // least looks correct, even if we can't test that it's actually correct.
-    if (!this.has_extended_attribute("NoInterfaceObject")
-    && (typeof obj != expected_typeof || obj instanceof Object))
+    test(function()
     {
-        test(function()
-        {
-            assert_equals(exception, null, "Unexpected exception when evaluating object");
-            assert_equals(typeof obj, expected_typeof, "wrong typeof object");
+        assert_equals(exception, null, "Unexpected exception when evaluating object");
+        assert_equals(typeof obj, expected_typeof, "wrong typeof object");
+
+        // "The value of the internal [[Prototype]] property of the
+        // platform object is the interface prototype object of the primary
+        // interface from the platform object’s associated global
+        // environment."
+        var prototype = Object.getPrototypeOf(obj);
+        assert_class_string(prototype, this.name + "Prototype",
+                            "class string of the prototype");
+
+        // If the interface object is present and the object comes from this
+        // global environment, test the prototype for equality too.
+        if (!this.has_extended_attribute("NoInterfaceObject") && obj instanceof Object) {
             assert_own_property(self, this.name,
                                 "self does not have own property " + format_value(this.name));
             assert_own_property(self[this.name], "prototype",
                                 'interface "' + this.name + '" does not have own property "prototype"');
-
-            // "The value of the internal [[Prototype]] property of the
-            // platform object is the interface prototype object of the primary
-            // interface from the platform object’s associated global
-            // environment."
-            assert_equals(Object.getPrototypeOf(obj),
+            assert_equals(prototype,
                           self[this.name].prototype,
                           desc + "'s prototype is not " + this.name + ".prototype");
-        }.bind(this), this.name + " must be primary interface of " + desc);
-    }
+        }
+    }.bind(this), this.name + " must be primary interface of " + desc);
 
     // "The class string of a platform object that implements one or more
     // interfaces must be the identifier of the primary interface of the
