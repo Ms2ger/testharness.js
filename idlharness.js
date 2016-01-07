@@ -1380,6 +1380,10 @@ IdlInterface.prototype.test_members = function()
 IdlInterface.prototype.test_object = function(desc)
 //@{
 {
+    // This function is called for each object passed in through add_objects,
+    // if the key is an interface defined in provided IDL.
+    //
+
     var obj, exception = null;
     try
     {
@@ -1416,6 +1420,13 @@ IdlInterface.prototype.test_object = function(desc)
 IdlInterface.prototype.test_primary_interface_of = function(desc, obj, exception, expected_typeof)
 //@{
 {
+    // This function is called on the primary interface for each object passed
+    // in through add_objects, if the key is an interface defined in provided
+    // IDL.
+    //
+    // This function tests the [[Prototype]] of obj (in so far as that is
+    // possible), and its class string.
+
     test(function()
     {
         assert_equals(exception, null, "Unexpected exception when evaluating object");
